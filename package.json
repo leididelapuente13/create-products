@@ -1,0 +1,26 @@
+{
+  "name": "create-products",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rmdir /s /q dist || echo No dist folder to remove",
+    "build": "mkdir dist && xcopy src dist /E /I /Y",
+    "package": "npm run clean && npm run build && powershell Compress-Archive -Path dist\\* -DestinationPath create-product.zip -Force"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.817.0",
+    "@aws-sdk/util-dynamodb": "^3.817.0",
+    "@types/aws-lambda": "^8.10.149",
+    "aws-sdk": "^2.1692.0",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/uuid": "^10.0.0"
+  }
+}
