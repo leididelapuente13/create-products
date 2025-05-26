@@ -1,18 +1,20 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
+import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid';
-import { verifyToken } from '../utils/auth';
 
 const dynamoDBClient = new DynamoDBClient({ region: 'us-west-1' });
 
-export const createProduct: APIGatewayProxyHandler = async (event) => {
-  const token = event.headers['Authorization']?.split(' ')[1];
+export const handler: APIGatewayProxyHandler = async (event) => {
+  const token = event.headers['authorization']?.split(' ')[1];
+
   if (!token) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
-  const userId = await verifyToken(token);
+  const userId =  jwt.verify(token, process.env.JWT_SECRET!);
+
   if (!userId) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Invalid token' }) };
   }
