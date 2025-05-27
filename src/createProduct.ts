@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import jwt from 'jsonwebtoken'
+import { JwtPayload } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
 const dynamoDBClient = new DynamoDBClient({ region: 'us-west-1' });
@@ -13,9 +14,9 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
-  const userId =  jwt.verify(token, process.env.JWT_SECRET!);
+  const decoded =  jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload & { id: string };;
 
-  if (!userId) {
+  if (!decoded.id) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Invalid token' }) };
   }
 
@@ -30,7 +31,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     brand,
     categories,
     price,
-    userId,
+    userId: decoded.id,
     createdAt: new Date().toISOString(),
   };
 

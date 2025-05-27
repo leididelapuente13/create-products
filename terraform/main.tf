@@ -59,7 +59,7 @@ resource "aws_lambda_function" "create_product" {
 
   environment {
     variables = {
-      JWT_SECRET_KEY      = "supersecret"
+      JWT_SECRET      = "supersecret"
       PRODUCT_TABLE_NAME   = var.product_table_name
     }
   }
